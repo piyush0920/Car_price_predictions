@@ -163,10 +163,4 @@ Converted comma-separated features into **count-based variables**:
 **Piyush Sharma**
 
 - 📧 Open to opportunities in Data Science / Analytics  
-- 💼 Skilled in ML, EDA, and statistical modeling  
-
----
-
-## ⭐ If you found this useful
-
-Give this repo a ⭐ and feel free to fork it!
+- 💼 Skilled in ML, EDA, and statistical modeling 
