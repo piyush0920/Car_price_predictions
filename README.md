@@ -1,3 +1,28 @@
+# 🚗 Car Price Prediction using Linear, Ridge & Lasso Regression
+
+A machine learning project focused on predicting car prices using **Linear Regression**, **Ridge**, and **Lasso** models, with an emphasis on **regularization techniques**, **feature engineering**, and **model evaluation**.
+
+---
+
+## 📌 Overview
+
+This project aims to build a regression model to estimate car prices based on vehicle attributes such as:
+
+- Mileage (`km`)
+- Age  
+- Engine specifications (`hp_kW`, `Displacement_cc`)  
+- Fuel type  
+- Brand  
+- Equipment features  
+
+The project follows a complete machine learning workflow:
+
+> **EDA → Feature Engineering → Preprocessing → Modeling → Evaluation → Interpretation**
+
+---
+
+## 📂 Project Structure
+
 ---
 
 ## 📊 Exploratory Data Analysis (EDA)
