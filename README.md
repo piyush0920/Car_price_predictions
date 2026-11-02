@@ -82,7 +82,6 @@ The following values are taken from the notebook's final comparison table.
 | Ridge Regression | 0.089543 | 0.120346 | 0.895732 |
 | Lasso Regression | 0.089540 | 0.120340 | 0.895742 |
 
-<text></text>
 
 **Important metric interpretation:** These metrics are calculated against `log_price`. MAE and RMSE are therefore in log-price units, not in the original currency of the car listing. They should not be presented as an average error of 0.0895 or 0.1203 currency units. To communicate price error in currency, inverse-transform predictions and evaluate them against the original `price` values.
 
