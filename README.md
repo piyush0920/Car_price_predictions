@@ -1,166 +1,142 @@
-# 🚗 Car Price Prediction using Linear, Ridge & Lasso Regression
+# Used-Car Price Prediction with Linear, Ridge and Lasso Regression
 
-A machine learning project focused on predicting car prices using **Linear Regression**, **Ridge**, and **Lasso** models, with an emphasis on **regularization techniques**, **feature engineering**, and **model evaluation**.
+A regression project exploring how vehicle specifications, condition, and equipment features relate to used-car prices. The workflow covers exploratory analysis, feature engineering, log-target transformation, multicollinearity checks, and regularized linear models.
 
----
+## Objective
 
-## 📌 Overview
+Estimate used-car prices from attributes such as mileage, vehicle age, engine power, displacement, fuel type, brand, body type, and equipment.
 
-This project aims to build a regression model to estimate car prices based on vehicle attributes such as:
+The project compares a Linear Regression baseline with Ridge (L2) and Lasso (L1) regression to assess whether regularization improves generalization after feature engineering.
 
-- Mileage (`km`)
-- Age  
-- Engine specifications (`hp_kW`, `Displacement_cc`)  
-- Fuel type  
-- Brand  
-- Equipment features  
+## Data
 
-The project follows a complete machine learning workflow:
+The notebook reports **15,915 raw observations** and loads the input from:
 
-> **EDA → Feature Engineering → Preprocessing → Modeling → Evaluation → Interpretation**
+```text
+Car_Price_data.csv
+```
 
----
+That CSV is not currently included in the repository. Obtain the source dataset separately and place it in the project root using the exact filename expected by the notebook before running the analysis.
 
-## 📂 Project Structure
+The notebook uses vehicle attributes such as:
 
----
+- Mileage (`km`) and vehicle age.
+- Engine power (`hp_kW`) and displacement (`Displacement_cc`).
+- Fuel, body type, brand, gears, and VAT status.
+- Equipment lists covering comfort, entertainment, safety, and extras.
 
-## 📊 Exploratory Data Analysis (EDA)
+The original dataset source and licence should be added to this README before redistributing the data.
 
-### Key Observations:
-- Dataset contains both **numerical and categorical features**
-- Some categorical variables show **class imbalance**
-- Several columns contain **comma-separated values**
+## Methodology
 
-### 🎯 Target Variable: `price`
-- Highly **right-skewed**
-- Contains **high-value outliers**
+### 1. Exploratory analysis
 
-### ✅ Transformation:
-- Applied **log transformation**:
-  - Improved normality
-  - Reduced skewness
-  - Stabilized variance
+- Inspect numerical and categorical feature distributions.
+- Examine class imbalance in categorical fields.
+- Investigate the right-skewed target price distribution.
+- Review missing values and outliers.
 
----
+### 2. Feature engineering
 
-## ⚙️ Feature Engineering & Preprocessing
+- Extract brand information from `make_model`.
+- Consolidate rare categories to reduce sparse one-hot features.
+- Convert comma-separated equipment fields into count features:
+  - `comfort_count`
+  - `safety_count`
+  - `extras_count`
+- Apply a log transformation to the target and model `log_price`.
 
-### 1. Categorical Feature Handling
-- Grouped **rare categories** to reduce sparsity
-- Extracted **brand** from `make_model`
+### 3. Preprocessing and split
 
-### 2. Text Feature Engineering
-Converted comma-separated features into **count-based variables**:
-- `comfort_count`
-- `safety_count`
-- `extras_count`
+- The notebook uses a **70:30 train/test split** with `random_state=0`.
+- Categorical variables are encoded for regression.
+- Numerical features are scaled using MinMax scaling.
+- The target used by the models is `log_price`, not the original price column.
 
-### 3. Train-Test Split
-- 80% Training  
-- 20% Testing  
+### 4. Multicollinearity
 
-### 4. Feature Scaling
-- Applied **Min-Max Scaling** to numerical features
-- Left **binary variables unscaled**
+Correlation analysis and Variance Inflation Factor (VIF) are used to investigate redundant predictors, including relationships among gears, displacement, weight, and other vehicle specifications.
 
----
+### 5. Models and tuning
 
-## 🔗 Multicollinearity Analysis
+| Model | Regularization | Tuning |
+|---|---|---|
+| Linear Regression | None | Baseline |
+| Ridge | L2 | Five-fold GridSearchCV |
+| Lasso | L1 | Five-fold GridSearchCV |
 
-- Used:
-  - **Correlation Heatmap**
-  - **Variance Inflation Factor (VIF)**
+The notebook's final selected values are:
 
-### Insights:
-- Some features showed **high VIF values** (e.g., gears, displacement, weight)
-- Instead of removing features:
-  - Addressed multicollinearity using **regularization**
+| Model | Selected alpha |
+|---|---:|
+| Ridge | 0.0001 |
+| Lasso | 0.00000886 |
 
----
+## Test-set results
 
-## 🤖 Models Implemented
+The following values are taken from the notebook's final comparison table.
 
-### 1. Linear Regression (Baseline)
-- Trained on log-transformed target
-- Serves as a benchmark
+| Model | MAE | RMSE | R² |
+|---|---:|---:|---:|
+| Linear Regression | 0.089543 | 0.120346 | 0.895732 |
+| Ridge Regression | 0.089543 | 0.120346 | 0.895732 |
+| Lasso Regression | 0.089540 | 0.120340 | 0.895742 |
 
----
+<text></text>
 
-### 2. Ridge Regression (L2 Regularization)
-- Tuned using **5-fold cross-validation**
-- Optimal alpha: **0.01**
-- Helps reduce coefficient variance
+**Important metric interpretation:** These metrics are calculated against `log_price`. MAE and RMSE are therefore in log-price units, not in the original currency of the car listing. They should not be presented as an average error of 0.0895 or 0.1203 currency units. To communicate price error in currency, inverse-transform predictions and evaluate them against the original `price` values.
 
----
+### Key takeaway
 
-### 3. Lasso Regression (L1 Regularization)
-- Performs **feature selection**
-- Optimal alpha found at **lower boundary**
-- Minimal regularization impact observed
+All three models perform almost identically on the reported test split. Ridge and Lasso provide negligible improvement over the unregularized baseline, suggesting that the chosen preprocessing and feature engineering already produce a reasonably stable linear modeling problem.
 
----
+## Technology stack
 
-## 📈 Model Performance
+Python, pandas, NumPy, Matplotlib, Seaborn, scikit-learn, Linear Regression, Ridge, Lasso, GridSearchCV, VIF.
 
-| Model              | MAE      | RMSE     | R²       |
-|--------------------|----------|----------|----------|
-| Linear Regression  | 0.089543 | 0.120346 | 0.895732 |
-| Ridge Regression   | 0.089543 | 0.120346 | 0.895732 |
-| Lasso Regression   | 0.089540 | 0.120340 | 0.895742 |
+## Repository contents
 
-### 📌 Key Insight:
-- All models performed **almost identically**
-- Regularization had **minimal impact**
+```text
+.
+├── RR_Car_Price_Prediction_Piyush.ipynb
+├── RR_Car_Price_Prediction_Piyush.pdf
+└── README.md
+```
 
----
+- [Open the analysis notebook](./RR_Car_Price_Prediction_Piyush.ipynb)
+- [Open the project report](./RR_Car_Price_Prediction_Piyush.pdf)
 
-## 📉 Residual Diagnostics
+## How to run
 
-### Observations:
-- Residuals are:
-  - Randomly scattered around zero ✅
-  - Approximately normally distributed ✅  
+Clone the repository:
 
-### Conclusion:
-- No major violations of:
-  - Linearity  
-  - Homoscedasticity  
+```bash
+git clone https://github.com/piyush0920/Car_price_predictions.git
+cd Car_price_predictions
+```
 
----
+Install the main dependencies:
 
-## 🔍 Interpretation of Results
+```bash
+pip install pandas numpy matplotlib seaborn scikit-learn statsmodels jupyter
+```
 
-- Despite multicollinearity:
-  - Regularization had **limited effect**
-- Reason:
-  - Strong **feature engineering**
-  - Proper **data preprocessing**
+Place `Car_Price_data.csv` in the repository root and launch:
 
----
+```bash
+jupyter notebook RR_Car_Price_Prediction_Piyush.ipynb
+```
 
-## 🧠 Key Takeaways
+Run the notebook cells in order. The input CSV must be obtained separately because it is not part of the committed repository.
 
-- ✅ Feature engineering > Model complexity  
-- ✅ Log transformation significantly improves performance  
-- ✅ Multicollinearity does not always harm predictive power  
-- ✅ Regularization should be **validated, not assumed necessary**  
-- ✅ Simple models can perform exceptionally well with clean data  
+## Limitations and next steps
 
----
+- Add the original dataset source and licence.
+- Evaluate inverse-transformed predictions in the original price unit.
+- Compare against non-linear models such as Random Forest or Gradient Boosting using the same held-out split.
+- Consider cross-validation and a more recent external test set to assess robustness across vehicle markets.
 
-## 🚀 Future Improvements
+## Author
 
-- Try **non-linear models** (Random Forest, XGBoost)
-- Perform **hyperparameter optimization**
-- Use **feature importance techniques**
-- Deploy as a **web app (Streamlit / Flask)**
-
----
-
-## 👤 Author
-
-**Piyush Sharma**
-
-- 📧 Open to opportunities in Data Science / Analytics  
-- 💼 Skilled in ML, EDA, and statistical modeling 
+**Piyush Sharma**  
+[GitHub](https://github.com/piyush0920) · [Portfolio](https://piyush0920.github.io/) · [LinkedIn](https://linkedin.com/in/piyush-sharma-6591171ba)
